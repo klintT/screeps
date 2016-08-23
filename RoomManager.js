@@ -23,11 +23,13 @@ Room.prototype.run = function() {
   var attackHostiles = function(room) {
     var hostiles = room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length) {
-      var turrest = getTowers(room);
-      for (t in turrets) {
-        turrets[t].attack(hostiles[0]);
+      var towers = getTowers(room);
+      for (t in towers) {
+        console.log('Attack status - ' +towers[t].attack(hostiles[0]));
+        return true;
       }
     }
+    return false;
   };
 
   // var healCreep = function(room) {
@@ -48,7 +50,9 @@ Room.prototype.run = function() {
   };
 
   //Threat Managment
-  attackHostiles(this);
+  if (attackHostiles(this)) {
+    return;
+  }
 
   //Repair
   repairStructures(this);

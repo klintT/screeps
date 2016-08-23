@@ -32,7 +32,7 @@ Spawn.prototype.run = function() {
     this.createCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, CARRY,CARRY, CARRY, CARRY, CARRY], null, {role: 'transporter'});
   } else if (conquerors.length < claimFlags) {
     this.createCreep([CLAIM, MOVE, MOVE, MOVE, MOVE], null, {role: 'conqueror'});
-  } else if (builders.length < 4) {
+  } else if (builders.length < 2) {
     this.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {role: 'builder'});
   } else if (upgraders.length < 3) {
     this.createCreep([WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], null, {role: 'upgrader'});
