@@ -6,17 +6,18 @@ Creep.prototype.runBaseManager = function() {
       }
     });
 
-    for (t in towers) {
-      if (creep.carry.energy < (towers[t].energyCapacity / 2.25)) {
-        creep.memory.emergenyLoad = true;
-        return;
+    if (towers.length) {
+      if (creep.carry.energy < (towers[0].energyCapacity / 2.25)) {
+        creep.memory.emergencyLoad = true;
       }
 
       // Load Turrets
-      if(creep.transfer(towers[t], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(towers[t]);
+      if(creep.transfer(towers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(towers[0]);
+        return;
       }
-      creep.memory.emergenyLoad = false;
+
+      creep.memory.emergencyLoad = false;
     }
   };
 
@@ -43,10 +44,12 @@ Creep.prototype.runBaseManager = function() {
   if (this.memory.transporting) {
     loadTower(this);
 
-    var targets = this.findNotFullEnergyStorage();
-    if(targets.length > 0) {
-      if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(targets[0]);
+    if (!this.memory.emergencyLoad) {
+      var targets = this.findNotFullEnergyStorage();
+      if(targets.length > 0) {
+        if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          this.moveTo(targets[0]);
+        }
       }
     }
   } else {

@@ -31,9 +31,9 @@ Room.prototype.run = function() {
     if (hostiles.length) {
       var towers = getTowers(room);
       for (t in towers) {
-        console.log('Attack status - ' +towers[t].attack(hostiles[0]));
-        return true;
+        console.log('Attack status - ' + towers[t].attack(hostiles[0]));
       }
+      return true;
     }
     return false;
   };
