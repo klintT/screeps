@@ -92,6 +92,6 @@ Spawn.prototype.run = function() {
   } else if (builders.length < 2) {
     this.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {role: 'builder'});
   } else if (upgraders.length < 3) {
-    this.createCreep([WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], null, {role: 'upgrader'});
+    this.createCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], null, {role: 'upgrader'});
   }
 };
