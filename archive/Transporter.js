@@ -38,10 +38,15 @@ Creep.prototype.runTransporter = function() {
     var target;
     if (!creep.memory.target || !Game.creeps[creep.memory.target]) {
       var room = Game.rooms[creep.memory.roomName];
+      if (!room) {
+        return;
+      }
+
       var collectionTeams = room.memory.collectionTeams;
 
-      var lowestTeam = 0;
+      var lowestTeam = 1;
       for (var i = 0; i < collectionTeams.length; i++) {
+        // TODO: This isn't working in removing transporters from a collection team.
         if (collectionTeams[lowestTeam].transporters.length > collectionTeams[i].transporters.length && !collectionTeams[i].hasLink) {
           lowestTeam = i;
         }
@@ -52,10 +57,14 @@ Creep.prototype.runTransporter = function() {
         }
       }
 
+      if (!collectionTeams[lowestTeam]) {
+        return;
+      }
+
       var collectors = collectionTeams[lowestTeam].collectors;
       var c = Math.floor(Math.random() * 2);
 
-      if (collectors && collectors.length && collectors[c] && Game.creeps[collectors[c]].carry.energy > 0) {
+      if (collectors && collectors.length && collectors[c] && Game.creeps[collectors[c]] && Game.creeps[collectors[c]].carry.energy > 0) {
         room.memory.collectionTeams[lowestTeam].transporters.push(creep.name);
         console.log('Targeting ' + i + ' ' + JSON.stringify(collectors[c]));
         target = creep.memory.target = collectors[c];

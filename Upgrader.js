@@ -19,15 +19,15 @@ Creep.prototype.runUpgrader = function() {
 
   if(this.memory.upgrading) {
     // Upgrade
-    if (!this.pos.isNearTo(this.room.controller)) {
-      this.moveTo(this.room.controller);
-    } else {
-      this.upgradeController(this.room.controller);
-    }
-
-    // if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+    // if (!this.pos.isNearTo(this.room.controller)) {
       // this.moveTo(this.room.controller);
+    // } else {
+      // this.upgradeController(this.room.controller);
     // }
+
+    if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+      this.moveTo(this.room.controller);
+    }
   } else {
     collectFromStorage(this);
   }

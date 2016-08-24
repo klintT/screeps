@@ -2,9 +2,10 @@ Room.prototype.run = function() {
   var initCollectionTeams = function(room) {
     var sources = room.find(FIND_SOURCES);
     for (name in sources) {
+      console.log('here');
       var collectionTeam = {};
       var hasLink = false;
-      if ((this.controller.level == 5 && name == 0) || this.controller.level > 5) {
+      if (this.controller && (this.controller.level == 5 && name == 0) || this.controller.level > 5) {
         hasLink = true;
       }
 
@@ -31,9 +32,9 @@ Room.prototype.run = function() {
     if (hostiles.length) {
       var towers = getTowers(room);
       for (t in towers) {
-        console.log('Attack status - ' + t + ' ' + towers[t].attack(hostiles[0]));
-        return true;
+        console.log('Attack status - ' + towers[t].attack(hostiles[0]));
       }
+      return true;
     }
     return false;
   };

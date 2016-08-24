@@ -20,7 +20,7 @@ Spawn.prototype.run = function() {
     var tankydps = _.filter(Game.creeps, (creep) => creep.memory.role == 'tankydps');
     var healers = _.filter(Game.creeps, (creep) => creep.memory.role == 'healer');
 
-    if (tanks.length < 1) {
+    if (tanks.length < 0) {
       spawn.createCreep(
         [
           TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
@@ -46,7 +46,7 @@ Spawn.prototype.run = function() {
           ATTACK, MOVE
         ],
         null, {role: 'tankydps'});
-    } else if (healers < 1) {
+    } else if (healers < 0) {
       spawn.createCreep(
         [
           TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
@@ -63,6 +63,7 @@ Spawn.prototype.run = function() {
 
   // TODO: I don't actually need to do this if I build a creep. Like if I
   // build a collector there is no reason to filter the rest of these.
+  var nomads = _.filter(Game.creeps, (creep) => creep.memory.role == 'nomad');
   var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
   var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
   var conquerors = _.filter(Game.creeps, (creep) => creep.memory.role == 'conqueror');
@@ -74,7 +75,7 @@ Spawn.prototype.run = function() {
   // clearCollectionTeams(collectors, transporters);
 
   var claimFlags = 1;
-  var warTime = false;
+  var warTime = true;
 
   // TODO: Get these values from sources and energy levels
   if (collectors.length < 8) {
@@ -91,7 +92,9 @@ Spawn.prototype.run = function() {
     this.createCreep([MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, CARRY,CARRY, CARRY, CARRY, CARRY], null, {role: 'scavenger'});
   } else if (builders.length < 2) {
     this.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {role: 'builder'});
-  } else if (upgraders.length < 3) {
+  } else if (nomads.length < 1) {
+    this.createCreep([WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], null, {role: 'nomad'});
+  } else if (upgraders.length < 4) {
     this.createCreep([WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], null, {role: 'upgrader'});
   }
 };

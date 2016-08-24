@@ -5,6 +5,7 @@ var Transporter = require('Transporter');
 var Collector = require('Collector');
 var Conqueror = require('Conqueror');
 
+var Nomad = require('Nomad');
 var Scavenger = require('Scavenger');
 var BaseManager = require('BaseManager');
 
@@ -47,9 +48,11 @@ Creep.prototype.run = function() {
     case 'baseManager':
       this.runBaseManager();
       break;
+    case 'nomad':
+      this.runNomad();
+      break;
     default:
-      this.runScavenger();
-      // console.log('Unimplemented role!');
+      console.log('Unimplemented role!');
   }
 };
 

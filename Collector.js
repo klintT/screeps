@@ -40,6 +40,10 @@ Creep.prototype.runCollector = function() {
         }
       }
 
+      if (!collectionTeams[lowestTeam]) {
+        return;
+      }
+
       // console.log('adding ' + creep.name + ' to ' + JSON.stringify(collectionTeams[lowestTeam]));
       collectionTeams[lowestTeam].collectors.push(creep.name);
       target = creep.memory.target = collectionTeams[lowestTeam].sourceName;
@@ -67,7 +71,7 @@ Creep.prototype.runCollector = function() {
         //Draw energy from base link
         var err = this.transfer(link[0], RESOURCE_ENERGY);
         if (err == ERR_NOT_IN_RANGE) {
-          link.moveTo(link[0]);
+          this.moveTo(link[0]);
         }
       }
     } else {
