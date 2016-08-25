@@ -46,7 +46,9 @@ Creep.prototype.runTransporter = function() {
 
       var lowestTeam = 1;
       for (var i = 0; i < collectionTeams.length; i++) {
-        // TODO: This isn't working in removing transporters from a collection team.
+        console.log(room.name);
+        console.log('Collection team ' + lowestTeam + ' has link status ' + collectionTeams[lowestTeam].hasLink);
+        console.log(JSON.stringify(collectionTeams[lowestTeam]));
         if (collectionTeams[lowestTeam].transporters.length > collectionTeams[i].transporters.length && !collectionTeams[i].hasLink) {
           lowestTeam = i;
         }

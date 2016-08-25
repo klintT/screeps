@@ -14,7 +14,7 @@ Creep.prototype.runCollector = function() {
         }
 
         console.log('Collector count in room ' + name +' is ' + collectorsCount);
-        if (collectorsCount < (2 * ct.length)) {
+        if (collectorsCount < (1 * ct.length)) {
           console.log('Collector targeting room ' + name);
           creep.memory.roomName = name;
           return;
@@ -47,6 +47,8 @@ Creep.prototype.runCollector = function() {
       // console.log('adding ' + creep.name + ' to ' + JSON.stringify(collectionTeams[lowestTeam]));
       collectionTeams[lowestTeam].collectors.push(creep.name);
       target = creep.memory.target = collectionTeams[lowestTeam].sourceName;
+      console.log('Collection team ' + lowestTeam + ' has link status ' + collectionTeams[lowestTeam].hasLink);
+      console.log(JSON.stringify(collectionTeams[lowestTeam]));
       creep.memory.hasLink = collectionTeams[lowestTeam].hasLink;
     } else {
       target = creep.memory.target;

@@ -2,10 +2,9 @@ Room.prototype.run = function() {
   var initCollectionTeams = function(room) {
     var sources = room.find(FIND_SOURCES);
     for (name in sources) {
-      console.log('here');
       var collectionTeam = {};
       var hasLink = false;
-      if (this.controller && ((this.controller.level == 5 && name == 0) || this.controller.level > 5)) {
+      if (room.controller && ((room.controller.level == 5 && name == 0) || room.controller.level > 5)) {
         hasLink = true;
       }
 
@@ -40,19 +39,25 @@ Room.prototype.run = function() {
   };
 
   // var healCreep = function(room) {
-    // var creeps = room;
+  // var creeps = room;
   // };
 
   var repairStructures = function(room) {
     var damaged = room.find(FIND_STRUCTURES, {
       filter: (structure) => {
-        return (structure.hits < (structure.hitsMax / 2));
+        return (
+          (structure.hits < (structure.hitsMax / 2) && (structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_RAMPART))
+        );
       }
     });
 
-    var turrets = getTowers(room);
-    for (t in turrets) {
-      turrets[t].repair(damaged[0]);
+    if (!damaged || damaged.length == 0) return;
+
+    var towers = getTowers(room);
+    for (t in towers) {
+      if(towers[t].energy > (towers[t].energyCapacity / 2.5)) {
+        towers[t].repair(damaged[0]);
+      }
     }
   };
 

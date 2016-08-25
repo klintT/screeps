@@ -10,6 +10,40 @@ Creep.prototype.runNomad = function() {
       if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
         creep.moveTo(target);
       }
+    } else {
+      if (creep.carry.energy > 0) {
+        creep.memory.building = true;
+      }
+    }
+  };
+
+  var repairStructures = function(creep) {
+    //Repair
+    var damaged = creep.room.find(FIND_STRUCTURES, {
+      filter: (structure) => {
+        return (structure.hits < (structure.hitsMax / 2));
+      }
+    });
+
+    if (damaged && damaged.length) {
+      if (creep.repair(damaged[0]) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(damaged[0]);
+        return;
+      }
+      return true;
+    }
+  };
+
+  var buildStructures = function(creep) {
+    //Build
+    var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+    var highPrio = _.filter(targets, (target) => target.structureType != STRUCTURE_ROAD);
+    var target = (highPrio.length) ? highPrio[0] : targets[0];
+
+    if (target) {
+      if (creep.build(target) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(target);
+      }
     }
   };
 
@@ -27,15 +61,8 @@ Creep.prototype.runNomad = function() {
   }
 
   if (this.memory.building) {
-    //Build
-    var targets = this.room.find(FIND_CONSTRUCTION_SITES);
-    var highPrio = _.filter(targets, (target) => target.structureType != STRUCTURE_ROAD);
-    var target = (highPrio.length) ? highPrio[0] : targets[0];
-
-    if (target) {
-      if (this.build(target) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target);
-      }
+    if (!repairStructures(this)) {
+      buildStructures(this);
     }
   } else {
     gatherEnergy(this);

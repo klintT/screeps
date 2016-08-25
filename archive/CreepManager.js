@@ -13,46 +13,59 @@ var Tank = require('Tank');
 var TankDPS = require('TankyDPS');
 var Healer = require('Healer');
 
+var Guard = require('Guard');
+
 Creep.prototype.run = function() {
   switch (this.memory.role) {
     case 'harvester':
-      this.runHarvester();
+      this.safeRunTask(this.runHarvester.bind(this));
       break;
     case 'builder':
-      this.runBuilder();
+      this.safeRunTask(this.runBuilder.bind(this));
       break;
     case 'upgrader':
-      this.runUpgrader();
+      this.safeRunTask(this.runUpgrader.bind(this));
       break;
     case 'collector':
-      this.runCollector();
+      this.safeRunTask(this.runCollector.bind(this));
       break;
     case 'transporter':
-      this.runTransporter();
+      this.safeRunTask(this.runTransporter.bind(this));
       break;
     case 'conqueror':
-      this.runConqueror();
+      this.safeRunTask(this.runConqueror.bind(this));
       break;
     case 'tank':
-      this.runTank();
+      this.safeRunTask(this.runTank.bind(this));
       break;
     case 'tankydps':
-      this.runTankyDPS();
+      this.safeRunTask(this.runTankyDPS.bind(this));
       break;
     case 'healer':
-      this.runHealer();
+      this.safeRunTask(this.runHealer.bind(this));
       break;
     case 'scavenger':
-      this.runScavenger();
+      this.safeRunTask(this.runScavenger.bind(this));
       break;
     case 'baseManager':
-      this.runBaseManager();
+      this.safeRunTask(this.runBaseManager.bind(this));
       break;
     case 'nomad':
-      this.runNomad();
+      this.safeRunTask(this.runNomad.bind(this));
+      break;
+    case 'guard':
+      this.safeRunTask(this.runGuard.bind(this));
       break;
     default:
-      console.log('Unimplemented role!');
+      console.log('Unimplemented role! ' + this.memory.role);
+  }
+};
+
+Creep.prototype.safeRunTask = function(callback) {
+  try {
+    callback();
+  } catch (err) {
+    console.log('Creep Error: ' + err);
   }
 };
 
@@ -119,6 +132,7 @@ Creep.prototype.planAttack = function() {
     let structures = flag.pos.lookFor(LOOK_STRUCTURES);
     if (structures.length && structures[0] instanceof Structure) {
       this.doAttack(structures[0], false);
+      return true;
     } else {
       flag.remove();
     }
@@ -128,6 +142,7 @@ Creep.prototype.planAttack = function() {
   var hostiles = this.room.find(FIND_HOSTILE_CREEPS);
   if (hostiles.length) {
     this.doAttack(hostiles[0], true);
+    return true;
   }
 };
 
