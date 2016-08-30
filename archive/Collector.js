@@ -59,7 +59,7 @@ Creep.prototype.runCollector = function() {
   };
 
   getRoom(this);
-  getTarget(this);
+  var target = getTarget(this);
   if (this.changeRooms()) {
     var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
     for (transporter in transporters) {
@@ -68,7 +68,13 @@ Creep.prototype.runCollector = function() {
 
     if (this.carry.energy == this.carryCapacity && this.memory.hasLink) {
       // TODO: Don't hard code this
-      var link = _.filter(this.room.lookForAt('structure', 41, 9), (struct) => struct.structureType == STRUCTURE_LINK);
+      var link;
+      if (this.target == 0) {
+        link = _.filter(this.room.lookForAt('structure', 41, 9), (struct) => struct.structureType == STRUCTURE_LINK);
+      } else {
+        link = _.filter(this.room.lookForAt('structure', 7, 15), (struct) => struct.structureType == STRUCTURE_LINK);
+      }
+
       if (link) {
         //Draw energy from base link
         var err = this.transfer(link[0], RESOURCE_ENERGY);
@@ -77,7 +83,6 @@ Creep.prototype.runCollector = function() {
         }
       }
     } else {
-      var target = getTarget(this);
       if (this.harvest(target) == ERR_NOT_IN_RANGE) {
         this.moveTo(target);
       }

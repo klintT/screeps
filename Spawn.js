@@ -16,6 +16,9 @@ Spawn.prototype.run = function() {
   };
   // clearCollectionTeams(collectors, transporters);
 
+  var creeps = _.filter(Game.creeps, (creep) => (creep.memory.renew == true && creep.pos.isNearTo(this)));
+  this.renewCreep(creeps[0]);
+
   // TODO: Get these values from sources and energy levels
   if (this.spawnCollector()) return;
   if (this.spawnBaseManager()) return;
@@ -27,7 +30,6 @@ Spawn.prototype.run = function() {
   if (this.spawnBuilder()) return;
   if (this.spawnUpgrader()) return;
   if (this.spawnNomad()) return;
-
 };
 
 Spawn.prototype.spawnCollector = function() {
@@ -40,7 +42,7 @@ Spawn.prototype.spawnCollector = function() {
         WORK,
         WORK,
         WORK,
-        CARRY, CARRY,
+        MOVE, MOVE,
         CARRY, MOVE
       ], null, {role: 'collector'}
     );
@@ -61,7 +63,9 @@ Spawn.prototype.spawnBaseManager = function() {
         MOVE, CARRY,
         CARRY,CARRY,
         CARRY, CARRY,
-        CARRY], null, {role: 'baseManager'}
+        CARRY, CARRY,
+        MOVE, CARRY
+      ], null, {role: 'baseManager'}
     );
     return true;
   }
@@ -69,7 +73,7 @@ Spawn.prototype.spawnBaseManager = function() {
 
 Spawn.prototype.spawnTransporter = function() {
   var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
-  if (transporters.length < 9) {
+  if (transporters.length < 6) {
     this.createCreep(
       [
         MOVE, MOVE,
@@ -145,8 +149,10 @@ Spawn.prototype.spawnBuilder = function() {
   if (builders.length < 2) {
     this.createCreep(
       [
-        WORK, WORK,
-        WORK, WORK,
+        WORK,
+        WORK,
+        WORK,
+        WORK,
         CARRY, CARRY,
         CARRY, CARRY,
         MOVE, MOVE,
@@ -176,61 +182,65 @@ Spawn.prototype.spawnNomad = function() {
 
 Spawn.prototype.spawnUpgrader = function() {
   var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
-  if (upgraders.length < 4) {
+  if (upgraders.length < 3) {
     this.createCreep(
       [
         WORK,
         WORK,
         WORK,
         WORK,
-        WORK,
         CARRY, CARRY,
         CARRY, CARRY,
         MOVE, MOVE,
-        MOVE, MOVE,
-        MOVE], null, {role: 'upgrader'}
+        MOVE, MOVE ], null, {role: 'upgrader'}
     );
     return true;
   }
 }
 
 Spawn.prototype.spawnArmy = function() {
-  var warTime = false;
+  var warTime = true;
   if (!warTime) return;
 
   var tanks = _.filter(Game.creeps, (creep) => creep.memory.role == 'tank');
   var tankydps = _.filter(Game.creeps, (creep) => creep.memory.role == 'tankydps');
   var healers = _.filter(Game.creeps, (creep) => creep.memory.role == 'healer');
 
-  if (tanks.length < 0) {
-    this.createCreep(
+  if (tanks.length < 2) {
+    var err = this.createCreep(
       [
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
+        // TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
+        // TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
         MOVE, MOVE,
         MOVE, MOVE,
         MOVE, MOVE,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        // ATTACK, ATTACK,
         ATTACK, ATTACK
       ],
       null, {role: 'tank'});
       return true;
-  } else if (tankydps.length < 1) {
+  } else if (tankydps.length < 0) {
     this.createCreep(
       [
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
         MOVE, MOVE,
         MOVE, MOVE,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
         ATTACK, ATTACK,
         ATTACK, ATTACK,
         ATTACK, MOVE
       ],
       null, {role: 'tankydps'});
       return true;
-  } else if (healers < 0) {
+  } else if (healers.length < 3) {
     this.createCreep(
       [
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,

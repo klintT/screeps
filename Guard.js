@@ -12,7 +12,7 @@ Creep.prototype.runGuard = function() {
     return;
   }
 
-  if (this.groupUp()) {
-    return;
+  if (!this.movingToFlag(COLOR_BLUE, COLOR_BLUE, 1)) {
+    this.planAttack(false);
   }
 };

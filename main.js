@@ -12,7 +12,9 @@ module.exports.loop = function () {
 
   for (var name in Game.rooms) {
     var room = Game.rooms[name];
+    try{
     room.run();
+    } catch (err){}
   }
 
   Game.spawns['Spawn1'].run();

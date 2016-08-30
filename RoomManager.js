@@ -31,7 +31,7 @@ Room.prototype.run = function() {
     if (hostiles.length) {
       var towers = getTowers(room);
       for (t in towers) {
-        console.log('Attack status - ' + towers[t].attack(hostiles[0]));
+        towers[t].attack(hostiles[0]);
       }
       return true;
     }
@@ -94,12 +94,7 @@ Room.prototype.run = function() {
     }
   }
 
-  // TODO: Seriously need flags to manage links. Hack for now because it's late
-  var linkFrom = _.filter(this.lookForAt('structure', 41, 9), (struct) => struct.structureType == STRUCTURE_LINK);
-  var linkTo = _.filter(this.lookForAt('structure', 27, 21), (struct) => struct.structureType == STRUCTURE_LINK);
-  if (linkFrom[0] && linkTo[0]) {
-    linkFrom[0].transferEnergy(linkTo[0]);
-  }
+  this.checkRoomLinks();
 
   // Conquering
   if (this.memory.action == 'reserve' && !Game.creeps[this.memory.conqueror]) {
@@ -114,4 +109,23 @@ Room.prototype.run = function() {
       // this.createConstructionSite(transporter.pos, STRUCTURE_ROAD);
     // }
   // }
+};
+
+Room.prototype.checkRoomLinks = function() {
+  // TODO: Cache these
+  var linkTo;
+  for ( let f of this.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW, secondaryColor: COLOR_WHITE } }) ) {
+    for ( let e of f.pos.findInRange(FIND_MY_STRUCTURES, 1, { filter: { structureType: STRUCTURE_LINK } }) ) {
+      linkTo = e;
+      break;
+    }
+  }
+
+  for ( let f of this.find(FIND_FLAGS, { filter: { color: COLOR_YELLOW, secondaryColor: COLOR_GREY } }) ) {
+    for ( let e of f.pos.findInRange(FIND_MY_STRUCTURES, 1, { filter: { structureType: STRUCTURE_LINK } }) ) {
+      if (e && linkTo) {
+        e.transferEnergy(linkTo);
+      }
+    }
+  }
 };

@@ -100,6 +100,10 @@ Room.prototype.run = function() {
   if (linkFrom[0] && linkTo[0]) {
     linkFrom[0].transferEnergy(linkTo[0]);
   }
+  var linkFromTwo = _.filter(this.lookForAt('structure', 7, 15), (struct) => struct.structureType == STRUCTURE_LINK);
+  if (linkFromTwo[0] && linkTo[0]) {
+    linkFromTwo[0].transferEnergy(linkTo[0]);
+  }
 
   // Conquering
   if (this.memory.action == 'reserve' && !Game.creeps[this.memory.conqueror]) {

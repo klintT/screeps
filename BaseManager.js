@@ -7,29 +7,24 @@ Creep.prototype.runBaseManager = function() {
     });
 
     if (towers.length) {
-      if (creep.carry.energy < (towers[0].energyCapacity / 2.25)) {
-        creep.memory.emergencyLoad = true;
-      }
-
       // Load Turrets
       if(creep.transfer(towers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         creep.moveTo(towers[0]);
         return;
       }
-
-      creep.memory.emergencyLoad = false;
     }
   };
 
   var collectFromBaseLink = function(creep) {
     // TODO: Use flags to specify this location instead of hard coding it
     var baseLink = _.filter(creep.room.lookForAt('structure', 27, 21), (struct) => struct.structureType == STRUCTURE_LINK);
-    if (baseLink) {
+    if (baseLink && baseLink[0].energy > 0) {
       //Draw energy from base link
       var err = creep.withdraw(baseLink[0], RESOURCE_ENERGY);
       if (err == ERR_NOT_IN_RANGE) {
         creep.moveTo(baseLink[0]);
       }
+      return true;
     }
   };
 
@@ -44,25 +39,21 @@ Creep.prototype.runBaseManager = function() {
   if (this.memory.transporting) {
     loadTower(this);
 
-    if (!this.memory.emergencyLoad) {
-      var targets = this.findNotFullEnergyStorage();
-      if(targets.length > 0) {
-        if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          this.moveTo(targets[0]);
-        }
+    var targets = this.findNotFullEnergyStorage();
+    if(targets.length > 0) {
+      if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        this.moveTo(targets[0]);
       }
     }
   } else {
-    collectFromBaseLink(this);
+    if (collectFromBaseLink(this)) return;
 
-    if (this.memory.emergenyLoad) {
-      var stores = this.findEnergyStorageWithEnergy();
-      if (stores.length) {
-        //Draw energy from storage
-        var err = this.withdraw(stores[0], RESOURCE_ENERGY);
-        if (err == ERR_NOT_IN_RANGE) {
-          this.moveTo(stores[0]);
-        }
+    var stores = this.findEnergyStorageWithEnergy();
+    if (stores.length) {
+      //Draw energy from storage
+      var err = this.withdraw(stores[0], RESOURCE_ENERGY);
+      if (err == ERR_NOT_IN_RANGE) {
+        this.moveTo(stores[0]);
       }
     }
   }

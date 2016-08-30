@@ -70,6 +70,8 @@ Creep.prototype.runTransporter = function() {
         room.memory.collectionTeams[lowestTeam].transporters.push(creep.name);
         console.log('Targeting ' + i + ' ' + JSON.stringify(collectors[c]));
         target = creep.memory.target = collectors[c];
+      } else {
+        // creep.getOutOfTheWay();
       }
     } else {
       target = creep.memory.target;

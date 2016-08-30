@@ -1,6 +1,6 @@
 Creep.prototype.runTankyDPS = function() {
-  this.say('BARBARBAR');
-  if (!this.groupUp()) {
-    this.planAttack();
-  }
+  this.say('BARBARBARBAR!');
+  if (this.planAttack()) return;
+  if (this.groupUp()) return;
+  this.waitBySpawn();
 };
