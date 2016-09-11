@@ -65,6 +65,7 @@ Spawn.prototype.checkIfAlreadySpawning = function(role) {
     spawn = Game.spawns[name];
     if (spawn && spawn.memory.spawningRole == role) return null;
   }
+  return spawn;
 };
 
 Spawn.prototype.doSpawn = function(roleName, bodyParts) {
