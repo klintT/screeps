@@ -1,20 +1,4 @@
 Creep.prototype.runBaseManager = function() {
-  var loadTower = function(creep) {
-    var towers = creep.room.find(FIND_STRUCTURES, {
-      filter: (structure) => {
-        return (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity / 1.25));
-      }
-    });
-
-    if (towers.length) {
-      // Load Turrets
-      if(creep.transfer(towers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(towers[0]);
-        return;
-      }
-    }
-  };
-
   var collectFromBaseLink = function(creep) {
     // TODO: Use flags to specify this location instead of hard coding it
     var baseLink = _.filter(creep.room.lookForAt('structure', 27, 21), (struct) => struct.structureType == STRUCTURE_LINK);
@@ -37,7 +21,7 @@ Creep.prototype.runBaseManager = function() {
   }
 
   if (this.memory.transporting) {
-    loadTower(this);
+    this.loadTower();
 
     var targets = this.findNotFullEnergyStorage();
     if(targets.length > 0) {

@@ -12,12 +12,21 @@ module.exports.loop = function () {
 
   for (var name in Game.rooms) {
     var room = Game.rooms[name];
-    try{
-    room.run();
-    } catch (err){}
+    // try{
+      room.run();
+    // } catch (err){
+      // console.log(err)
+    // }
   }
 
-  Game.spawns['Spawn1'].run();
+  for (var name in Game.spawns) {
+    // try {
+      Game.spawns[name].run();
+    // } catch (err) {
+      // console.log(err)
+    // }
+  }
+
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
     creep.run();

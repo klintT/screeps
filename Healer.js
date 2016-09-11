@@ -1,5 +1,6 @@
 Creep.prototype.runHealer = function() {
-  this.say('I Heal The!');
+  // this.say('I Heal The!');
+  // if (this.beDecoy()) return;
   if (this.planHeal()) return;
   if (this.groupUp()) return;
   this.waitBySpawn();
@@ -12,9 +13,18 @@ Creep.prototype.planHeal = function() {
     }
   });
 
+  if (this.hits < 1700) {
+    if (!this.movingToFlag(COLOR_GREEN, COLOR_GREEN, 1)) {
+      this.heal(target);
+    }
+    return true;
+  }
+
   if (target) {
     if (this.heal(target) == ERR_NOT_IN_RANGE) {
-      this.moveTo(target);
+      if (this.moveTo(target) === ERR_NO_PATH) {
+        this.rangedHeal(target);
+      }
     }
     return true;
   }

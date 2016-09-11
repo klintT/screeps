@@ -1,18 +1,20 @@
 Creep.prototype.runScavenger = function() {
-  if (this.memory.scavenging && this.carry.energy === 0) {
+  var carryAmount = this.getTotalCarryAmount();
+  if (this.memory.scavenging && carryAmount === 0) {
     this.memory.scavenging = false;
   }
 
-  if (!this.memory.scavenging && this.carry.energy == this.carryCapacity) {
+  if (!this.memory.scavenging && carryAmount === this.carryCapacity) {
     this.memory.scavenging = true;
   }
 
-
   if (this.memory.scavenging) {
-    var targets = this.findNotFullEnergyStorage();
-    if(targets.length > 0) {
-      if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(targets[0]);
+    var targets = this.findMineralStorage();
+    if (targets.length > 0) {
+      for (c in this.carry) {
+        if(this.transfer(targets[0], c) == ERR_NOT_IN_RANGE) {
+          this.moveTo(targets[0]);
+        }
       }
     } else {
       this.runBaseManager();
@@ -28,3 +30,11 @@ Creep.prototype.runScavenger = function() {
     }
   }
 };
+
+Creep.prototype.getTotalCarryAmount = function() {
+  var amount = 0;
+  for (c in this.carry) {
+    amount += this.carry[c];
+  }
+  return amount;
+}
