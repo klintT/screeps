@@ -20,7 +20,11 @@ Spawn.prototype.run = function() {
   this.renewCreep(creeps[0]);
 
   // If we are already spawning a creep just leave here
-  if (this.spawning != null) return;
+  if (this.spawning != null) {
+    return;
+  } else {
+    this.memory.spawningRole = null;
+  }
 
   if (this.room.controller.level < 3) {
     if (this.spawnHarvester()) return;
