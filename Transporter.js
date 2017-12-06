@@ -2,11 +2,11 @@ Creep.prototype.runTransporter = function() {
   var getRoom = function(creep) {
     if (!creep.memory.roomName) {
       var room;
-      var failedName;
       for (var name in Game.rooms) {
         room = Game.rooms[name];
         // TODO: Check if the room is marked for harvest
         var ct = room.memory.collectionTeams;
+        if (!ct) continue;
 
         var count = 0;
         var nonLinkCount = 0;
@@ -17,20 +17,11 @@ Creep.prototype.runTransporter = function() {
           }
         }
 
-        console.log('Trasporter count in room ' + name + ' is as ' + count + ' with ' + nonLinkCount + 'teams without links');
-        if (count < (3 * nonLinkCount)) {
-          console.log('Transporter targeting room ' + name);
+        if (count < (2 * nonLinkCount)) {
           creep.memory.roomName = name;
           return;
         }
-
-        if (!failedName) {
-          failedName = name;
-        }
       }
-
-      console.log('Failed to find room with less than 3 transporters per source.');
-      creep.memory.roomName = failedName;
     }
   };
 
@@ -38,17 +29,11 @@ Creep.prototype.runTransporter = function() {
     var target;
     if (!creep.memory.target || !Game.creeps[creep.memory.target]) {
       var room = Game.rooms[creep.memory.roomName];
-      if (!room) {
-        return;
-      }
+      if (!room) return;
 
       var collectionTeams = room.memory.collectionTeams;
-
-      var lowestTeam = 1;
+      var lowestTeam = 0;
       for (var i = 0; i < collectionTeams.length; i++) {
-        // console.log(room.name);
-        // console.log('Collection team ' + lowestTeam + ' has link status ' + collectionTeams[lowestTeam].hasLink);
-        // console.log(JSON.stringify(collectionTeams[lowestTeam]));
         if (collectionTeams[lowestTeam].transporters.length > collectionTeams[i].transporters.length && !collectionTeams[i].hasLink) {
           lowestTeam = i;
         }
@@ -69,8 +54,7 @@ Creep.prototype.runTransporter = function() {
 
       if (collectors && collectors.length && collectors[c] && Game.creeps[collectors[c]] && Game.creeps[collectors[c]].carry.energy > 0) {
         room.memory.collectionTeams[lowestTeam].transporters.push(creep.name);
-        console.log('Targeting ' + i + ' ' + JSON.stringify(collectors[c]));
-        target = creep.memory.target = collectors[c];
+        target = creep.memory.target = collector;
       } else {
         // creep.getOutOfTheWay();
       }

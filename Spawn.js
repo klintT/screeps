@@ -30,14 +30,15 @@ Spawn.prototype.run = function() {
   }
 
   if (this.spawnCollector()) return;
-  if (this.spawnBaseManager()) return;
   if (this.spawnTransporter()) return;
+  if (this.spawnBaseManager()) return;
   if (this.spawnArmy()) return;
-  if (this.spawnGuard()) return;
+  if (this.spawnMineralHarvester()) return;
+  if (this.spawnUpgrader()) return;
   if (this.spawnConqueror()) return;
   if (this.spawnScavenger()) return;
+  if (this.spawnGuard()) return;
   if (this.spawnBuilder()) return;
-  if (this.spawnUpgrader()) return;
   if (this.spawnNomad()) return;
 };
 
@@ -148,6 +149,54 @@ Spawn.prototype.spawnUpgrader = function() {
   }
 }
 
+Spawn.prototype.checkRoomsForSpawnNeeds = function(role) {
+  var room;
+  var shouldSpawnCollector = false;
+  for (i in this.room.memory.managedRooms) {
+    var name = this.room.memory.managedRooms[i];
+    room = Game.rooms[name];
+    if (room && room.memory.needs[role] > 0) {
+      shouldSpawnCollector = true;
+      break;
+    }
+  }
+
+  return {'room': room, 'shouldSpawn': shouldSpawnCollector};
+};
+
+Spawn.prototype.checkIfAlreadySpawning = function(role) {
+  for (i in this.memory.roomSpawns) {
+    var name = this.memory.roomSpawns[i];
+    var spawn = Game.spawns[name];
+    if (spawn && spawn.memory.spawningRole == role) return true;
+  }
+
+  return false;
+};
+
+Spawn.prototype.doSpawn = function(roleName, bodyParts) {
+  var res = this.checkRoomsForSpawnNeeds(roleName);
+  var room = res.room;
+  var shouldSpawnCollector = res.shouldSpawn;
+
+  var spawning = this.checkIfAlreadySpawning(roleName);
+
+  if (room && shouldSpawnCollector && !spawning) {
+    var status = this.createCreep(
+      bodyParts, null, {role: roleName}
+    );
+
+    if (_.isString(status)) {
+      room.memory.needs[roleName] -= 1;
+      this.memory.spawningRole = roleName;
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
 Spawn.prototype.spawnCollector = function() {
   var collectors = _.filter(Game.creeps, (creep) => creep.memory.role == 'collector');
   if (collectors.length < 4) {
@@ -165,7 +214,7 @@ Spawn.prototype.spawnCollector = function() {
     this.createCreep(parts, null, {role: 'collector'});
     return true;
   }
-}
+};
 
 Spawn.prototype.spawnBaseManager = function() {
   var baseManagers = _.filter(Game.creeps, (creep) => creep.memory.role == 'baseManager');
@@ -185,9 +234,25 @@ Spawn.prototype.spawnBaseManager = function() {
 
     var parts = this.getAffordableParts(desiredParts);
     this.createCreep(parts, null, {role: 'baseManager'});
+  }
+};
+
+Spawn.prototype.spawnMineralHarvester = function() {
+  var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'mineral_harvester');
+  if (harvesters.length < 0) {
+    var desiredParts = [
+      WORK, WORK,
+      CARRY, CARRY,
+      CARRY, CARRY,
+      MOVE, MOVE,
+      MOVE, MOVE
+    ];
+
+    var parts = this.getAffordableParts(desiredParts);
+    this.createCreep(parts, null, {role: 'mineral_harvester'});
     return true;
   }
-}
+};
 
 Spawn.prototype.spawnTransporter = function() {
   var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
@@ -311,7 +376,39 @@ Spawn.prototype.spawnArmy = function() {
   var tankydps = _.filter(Game.creeps, (creep) => creep.memory.role == 'tankydps');
   var healers = _.filter(Game.creeps, (creep) => creep.memory.role == 'healer');
 
-  if (tanks.length < 2) {
+  if (healers.length < (0)) {
+    this.createCreep(
+      [
+        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        HEAL, HEAL,
+        HEAL, HEAL,
+        HEAL, HEAL,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        HEAL, MOVE
+      ],
+      null, {role: 'healer'});
+      return true;
+  } else if (tankydps.length < 4) {
+    this.createCreep(
+      [
+        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
+        ATTACK, ATTACK,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        MOVE, MOVE,
+        ATTACK, MOVE
+      ],
+      null, {role: 'tankydps'});
+      return true;
+  } else if (tanks.length < 0) {
     var err = this.createCreep(
       [
         TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
@@ -328,35 +425,6 @@ Spawn.prototype.spawnArmy = function() {
         ATTACK, ATTACK
       ],
       null, {role: 'tank'});
-      return true;
-  } else if (tankydps.length < 0) {
-    this.createCreep(
-      [
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        MOVE, MOVE,
-        MOVE, MOVE,
-        ATTACK, ATTACK,
-        ATTACK, ATTACK,
-        ATTACK, ATTACK,
-        ATTACK, ATTACK,
-        ATTACK, ATTACK,
-        ATTACK, MOVE
-      ],
-      null, {role: 'tankydps'});
-      return true;
-  } else if (healers.length < 3) {
-    this.createCreep(
-      [
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH,
-        MOVE, MOVE,
-        MOVE, MOVE,
-        HEAL, HEAL,
-        HEAL, MOVE
-      ],
-      null, {role: 'healer'});
       return true;
   }
 }

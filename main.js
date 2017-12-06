@@ -10,6 +10,7 @@ module.exports.loop = function () {
     }
   }
 
+  Game.spawns['Spawn1'].run();
   for (var name in Game.rooms) {
     var room = Game.rooms[name];
     try{
@@ -17,7 +18,6 @@ module.exports.loop = function () {
     } catch (err) {}
   }
 
-  Game.spawns['Spawn1'].run();
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
     creep.run();
