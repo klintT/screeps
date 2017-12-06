@@ -1,7 +1,11 @@
 Creep.prototype.runHarvester = function() {
   if(this.carry.energy < this.carryCapacity) {
     var sources = this.room.find(FIND_SOURCES);
-    var target = 0;
+    if (!this.memory.target && this.memory.target !== 0) {
+      this.memory.target = Math.floor(Math.random() * sources.length);
+    }
+
+    var target = this.memory.target;
     if(this.harvest(sources[target]) == ERR_NOT_IN_RANGE) {
       this.moveTo(sources[target]);
     }

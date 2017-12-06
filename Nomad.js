@@ -1,11 +1,11 @@
 Creep.prototype.runNomad = function() {
   var getRoom = function(creep) {
     // TODO: Don't hard code this
-    creep.memory.roomName = 'W52S38';
+    creep.memory.roomName = 'W33S22';
   };
 
   var gatherEnergy = function(creep) {
-    var target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+    var target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }});
     if (target) {
       if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
         creep.moveTo(target);

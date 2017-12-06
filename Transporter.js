@@ -46,9 +46,9 @@ Creep.prototype.runTransporter = function() {
 
       var lowestTeam = 1;
       for (var i = 0; i < collectionTeams.length; i++) {
-        console.log(room.name);
-        console.log('Collection team ' + lowestTeam + ' has link status ' + collectionTeams[lowestTeam].hasLink);
-        console.log(JSON.stringify(collectionTeams[lowestTeam]));
+        // console.log(room.name);
+        // console.log('Collection team ' + lowestTeam + ' has link status ' + collectionTeams[lowestTeam].hasLink);
+        // console.log(JSON.stringify(collectionTeams[lowestTeam]));
         if (collectionTeams[lowestTeam].transporters.length > collectionTeams[i].transporters.length && !collectionTeams[i].hasLink) {
           lowestTeam = i;
         }
@@ -64,7 +64,8 @@ Creep.prototype.runTransporter = function() {
       }
 
       var collectors = collectionTeams[lowestTeam].collectors;
-      var c = Math.floor(Math.random() * 2);
+      // var c = Math.floor(Math.random() * 2);
+      var c = 0;
 
       if (collectors && collectors.length && collectors[c] && Game.creeps[collectors[c]] && Game.creeps[collectors[c]].carry.energy > 0) {
         room.memory.collectionTeams[lowestTeam].transporters.push(creep.name);
@@ -96,7 +97,7 @@ Creep.prototype.runTransporter = function() {
       if (target){
         // Move to the fullest collector
         this.moveTo(target);
-        this.pickup(this.pos.findClosestByRange(FIND_DROPPED_ENERGY));
+        this.pickup(this.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }}));
       }
     }
   } else {

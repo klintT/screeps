@@ -10,22 +10,15 @@ Creep.prototype.runUpgrader = function() {
     }
   };
 
-  if(this.memory.upgrading && this.carry.energy == 0) {
+  if (this.memory.upgrading && this.carry.energy == 0) {
     this.memory.upgrading = false;
   }
-  if(!this.memory.upgrading && this.carry.energy == this.carryCapacity) {
+  if (!this.memory.upgrading && this.carry.energy == this.carryCapacity) {
     this.memory.upgrading = true;
   }
 
-  if(this.memory.upgrading) {
-    // Upgrade
-    // if (!this.pos.isNearTo(this.room.controller)) {
-      // this.moveTo(this.room.controller);
-    // } else {
-      // this.upgradeController(this.room.controller);
-    // }
-
-    if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+  if (this.memory.upgrading) {
+    if (this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
       this.moveTo(this.room.controller);
     }
   } else {

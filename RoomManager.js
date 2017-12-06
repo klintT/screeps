@@ -5,6 +5,7 @@ Room.prototype.run = function() {
       var collectionTeam = {};
       var hasLink = false;
       if (room.controller && ((room.controller.level == 5 && name == 0) || room.controller.level > 5)) {
+        //TODO: Reactive when links are dynamic and not hard coded
         hasLink = true;
       }
 
@@ -55,7 +56,7 @@ Room.prototype.run = function() {
 
     var towers = getTowers(room);
     for (t in towers) {
-      if(towers[t].energy > (towers[t].energyCapacity / 2.5)) {
+      if (towers[t].energy > (towers[t].energyCapacity / 2.5)) {
         towers[t].repair(damaged[0]);
       }
     }
@@ -102,12 +103,10 @@ Room.prototype.run = function() {
   }
 
   // Auto-Build
-  // if (this.name != 'W52S38') {
-    // var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
-    // for (t in transporters) {
-      // var transporter = transporters[t];
-      // this.createConstructionSite(transporter.pos, STRUCTURE_ROAD);
-    // }
+  // var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
+  // for (t in transporters) {
+    // var transporter = transporters[t];
+    // this.createConstructionSite(transporter.pos, STRUCTURE_ROAD);
   // }
 };
 

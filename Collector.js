@@ -22,7 +22,7 @@ Creep.prototype.runCollector = function() {
         failedName = name;
       }
 
-      console.log('Failed to find room with less than 2 collectors per source.');
+      console.log('Failed to find room with less than 1 collectors per source.');
       creep.memory.roomName = failedName;
     }
   };
@@ -70,7 +70,7 @@ Creep.prototype.runCollector = function() {
       // TODO: Don't hard code this
       var link;
       if (this.memory.target == 0) {
-        link = _.filter(this.room.lookForAt('structure', 41, 9), (struct) => struct.structureType == STRUCTURE_LINK);
+        link = _.filter(this.room.lookForAt('structure', 9, 25), (struct) => struct.structureType == STRUCTURE_LINK);
       } else {
         link = _.filter(this.room.lookForAt('structure', 7, 15), (struct) => struct.structureType == STRUCTURE_LINK);
       }

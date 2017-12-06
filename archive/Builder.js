@@ -1,6 +1,6 @@
 Creep.prototype.runBuilder = function() {
   var gatherEnergy = function(creep) {
-    var target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+    var target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }});
     if (target) {
       if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
         creep.moveTo(target);
@@ -20,11 +20,11 @@ Creep.prototype.runBuilder = function() {
       }
     } else {
       //Harvest
-      // var sources = creep.room.find(FIND_SOURCES);
-      // var target = 1;
-      // if(creep.harvest(sources[target]) == ERR_NOT_IN_RANGE) {
-        // creep.moveTo(sources[target]);
-      // }
+      var sources = creep.room.find(FIND_SOURCES);
+      var target = 0;
+      if(creep.harvest(sources[target]) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(sources[target]);
+      }
     }
   };
 

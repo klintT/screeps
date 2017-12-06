@@ -17,73 +17,74 @@ var Baiter = require('Baiter');
 var Guard = require('Guard');
 
 Creep.prototype.run = function() {
-  switch (this.memory.role) {
+  var role = this.memory.role;
+  switch (role) {
     case 'harvester':
       if (this.flee()) return;
-      this.safeRunTask(this.runHarvester.bind(this));
+      this.safeRunTask(this.runHarvester.bind(this), role);
       break;
     case 'builder':
       if (this.flee()) return;
-      this.safeRunTask(this.runBuilder.bind(this));
+      this.safeRunTask(this.runBuilder.bind(this), role);
       break;
     case 'upgrader':
       if (this.flee()) return;
-      this.safeRunTask(this.runUpgrader.bind(this));
+      this.safeRunTask(this.runUpgrader.bind(this), role);
       break;
     case 'collector':
       if (this.flee()) return;
-      this.safeRunTask(this.runCollector.bind(this));
+      this.safeRunTask(this.runCollector.bind(this), role);
       break;
     case 'transporter':
       if (this.flee()) return;
-      this.safeRunTask(this.runTransporter.bind(this));
+      this.safeRunTask(this.runTransporter.bind(this), role);
       break;
     case 'conqueror':
       if (this.flee()) return;
-      this.safeRunTask(this.runConqueror.bind(this));
+      this.safeRunTask(this.runConqueror.bind(this), role);
       break;
     case 'tank':
-      this.safeRunTask(this.runTank.bind(this));
+      this.safeRunTask(this.runTank.bind(this), role);
       break;
     case 'tankydps':
-      this.safeRunTask(this.runTankyDPS.bind(this));
+      this.safeRunTask(this.runTankyDPS.bind(this), role);
       break;
     case 'healer':
-      this.safeRunTask(this.runHealer.bind(this));
+      this.safeRunTask(this.runHealer.bind(this), role);
       break;
     case 'scavenger':
       if (this.flee()) return;
-      this.safeRunTask(this.runScavenger.bind(this));
+      this.safeRunTask(this.runScavenger.bind(this), role);
       break;
     case 'baseManager':
       if (this.flee()) return;
-      this.safeRunTask(this.runBaseManager.bind(this));
+      this.safeRunTask(this.runBaseManager.bind(this), role);
       break;
     case 'nomad':
       if (this.flee()) return;
-      this.safeRunTask(this.runNomad.bind(this));
+      this.safeRunTask(this.runNomad.bind(this), role);
       break;
     case 'guard':
-      this.safeRunTask(this.runGuard.bind(this));
+      this.safeRunTask(this.runGuard.bind(this), role);
       break;
     case 'baiter':
-      this.safeRunTask(this.runBaiter.bind(this));
+      this.safeRunTask(this.runBaiter.bind(this), role);
       break;
     default:
       console.log('Unimplemented role! ' + this.memory.role);
   }
 };
 
-Creep.prototype.safeRunTask = function(callback) {
+Creep.prototype.safeRunTask = function(callback, creepType) {
   try {
     callback();
   } catch (err) {
-    console.log('Creep Error: ' + err);
+    console.log('Creep Error: ' + creepType + ' : ' + err);
   }
 };
 
 Creep.prototype.findEnergyStorageWithEnergy = function(requestedEnergy) {
-  var neededEnergy = (requestedEnergy) ? requestedEnergy : 50;
+  var neededEnergy = (requestedEnergy) ? requestedEnergy : 49;
   return this.room.find(FIND_STRUCTURES, {
     filter: (structure) => {
       return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] > neededEnergy);
@@ -97,7 +98,6 @@ Creep.prototype.findNotFullEnergyStorage = function() {
               structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
   }});
   if (target){
-    //TODO: unArry this
     return [target];
   } else {
     return this.room.find(FIND_STRUCTURES, {
@@ -109,7 +109,8 @@ Creep.prototype.findNotFullEnergyStorage = function() {
 };
 
 Creep.prototype.onEdge = function() {
-  return (this.pos.x <= 1 || this.pos.x > 48 || this.pos.y <= 0 || this.pos.y > 48);
+  return false;
+  // return (this.pos.x <= 1 || this.pos.x > 48 || this.pos.y <= 0 || this.pos.y > 48);
 };
 
 Creep.prototype.changeRooms = function(sayRoom) {

@@ -2,7 +2,7 @@ Creep.prototype.runGuard = function() {
   this.say('Not Today Scumbag');
   var getRoom = function(creep) {
     // TODO: Don't hard code this
-    creep.memory.roomName = 'W52S38';
+    creep.memory.roomName = 'W33S22';
   };
 
   if (this.planAttack()) return;
@@ -12,7 +12,7 @@ Creep.prototype.runGuard = function() {
     return;
   }
 
-  if (this.groupUp()) {
-    return;
+  if (!this.movingToFlag(COLOR_BLUE, COLOR_BLUE, 1)) {
+    this.planAttack(false);
   }
 };
