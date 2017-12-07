@@ -48,11 +48,8 @@ Creep.prototype.runTransporter = function() {
         return;
       }
 
-      var collectors = collectionTeams[lowestTeam].collectors;
-      // var c = Math.floor(Math.random() * 2);
-      var c = 0;
-
-      if (collectors && collectors.length && collectors[c] && Game.creeps[collectors[c]] && Game.creeps[collectors[c]].carry.energy > 0) {
+      var collector = collectionTeams[lowestTeam].collectors;
+      if (collector && Game.creeps[collector] && Game.creeps[collector].carry.energy > 0) {
         room.memory.collectionTeams[lowestTeam].transporters.push(creep.name);
         target = creep.memory.target = collector;
       } else {
