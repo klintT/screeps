@@ -20,7 +20,7 @@ Creep.prototype.runBaiter = function() {
 
 Creep.prototype.dropBait = function() {
   if (this.movingToFlag(COLOR_RED, COLOR_YELLOW)) {
-    this.drop(RESOURCE_ENERGY, 10);
+    this.drop(RESOURCE_ENERGY);
     return true;
   }
 

@@ -1,8 +1,13 @@
 Creep.prototype.runBuilder = function() {
+  var getRoom = function(creep) {
+    // TODO: Don't hard code this
+    creep.memory.roomName = 'W52S37';
+  };
+
   var gatherEnergy = function(creep) {
     var target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }});
     if (target) {
-      if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
+      if (creep.pickup(target) == ERR_NOT_IN_RANGE) {
         creep.moveTo(target);
       }
     } else {
@@ -37,10 +42,18 @@ Creep.prototype.runBuilder = function() {
   }
 
   if (this.memory.building) {
+    // getRoom(this);
+    // if (!this.changeRooms()) {
+      // return;
+    // }
+
     //Build
-    var targets = this.room.find(FIND_CONSTRUCTION_SITES);
-    var highPrio = _.filter(targets, (target) => target.structureType != STRUCTURE_ROAD);
-    var target = (highPrio.length) ? highPrio[0] : targets[0];
+    var target = this.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES);
+    if (!target)  {
+      var targets = Game.constructionSites;
+      var highPrio = _.filter(targets, (target) => target.structureType != STRUCTURE_ROAD);
+      target = (highPrio.length) ? highPrio[0] : targets[0];
+    }
 
     if (target) {
       if (this.build(target) == ERR_NOT_IN_RANGE) {

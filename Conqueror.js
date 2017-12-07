@@ -35,6 +35,8 @@ Creep.prototype.runConqueror = function() {
       action =this.claimController.bind(this);
     } else if (this.memory.action === 'attack') {
       action = this.attackController.bind(this);
+    } else {
+      return;
     }
 
     if (action(this.room.controller) == ERR_NOT_IN_RANGE) {

@@ -23,6 +23,10 @@ Creep.prototype.run = function() {
       if (this.flee()) return;
       this.safeRunTask(this.runHarvester.bind(this), role);
       break;
+    case 'mineral_harvester':
+      if (this.flee()) return;
+      this.safeRunTask(this.runHarvester.bind(this));
+      break;
     case 'builder':
       if (this.flee()) return;
       this.safeRunTask(this.runBuilder.bind(this), role);
@@ -79,8 +83,17 @@ Creep.prototype.safeRunTask = function(callback, creepType) {
   try {
     callback();
   } catch (err) {
-    console.log('Creep Error: ' + creepType + ' : ' + err);
+    console.log('Creep Error: ' + err + ' from ' + this.memory.role);
   }
+};
+
+Creep.prototype.findMineralStorage = function() {
+  // TODO: Check if is completely full and not just energy
+  return this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => {
+      return ((structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] < structure.storeCapacity);
+    }
+  });
 };
 
 Creep.prototype.findEnergyStorageWithEnergy = function(requestedEnergy) {
@@ -92,12 +105,14 @@ Creep.prototype.findEnergyStorageWithEnergy = function(requestedEnergy) {
   });
 };
 
-Creep.prototype.findNotFullEnergyStorage = function() {
+Creep.prototype.findNotFullEnergyStorage = function(longTermOnly) {
   var target = this.pos.findClosestByRange(FIND_STRUCTURES, { filter: function(structure) {
       return (structure.structureType == STRUCTURE_EXTENSION ||
               structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
   }});
-  if (target){
+
+  if (target && !longTermOnly){
+    //TODO: unArry this
     return [target];
   } else {
     return this.room.find(FIND_STRUCTURES, {
@@ -109,8 +124,7 @@ Creep.prototype.findNotFullEnergyStorage = function() {
 };
 
 Creep.prototype.onEdge = function() {
-  return false;
-  // return (this.pos.x <= 1 || this.pos.x > 48 || this.pos.y <= 0 || this.pos.y > 48);
+  return (this.pos.x <= 0 || this.pos.x > 48 || this.pos.y <= 0 || this.pos.y > 48);
 };
 
 Creep.prototype.changeRooms = function(sayRoom) {
@@ -181,21 +195,24 @@ Creep.prototype.flee = function() {
 
 Creep.prototype.getSafeRoomName = function() {
   // if (this.room.roomName == 'W52S38') {
-  return 'W52S39';
+  // return 'W52S39';
   // }
 };
 
-Creep.prototype.planAttack = function(overrideTarget) {
+Creep.prototype.planAttack = function(overrideTarget, _secondColor) {
   var defaultTargeting = (overrideTarget) ? overrideTarget : true;
 
   if (this.memory.target && Game.creeps[this.memory.target]) {
     this.doAttack(Game.creeps[this.memory.target]);
   }
 
-  var flag = this.pos.findClosestByRange(FIND_FLAGS, { filter: { color: COLOR_RED, secondaryColor: COLOR_RED } });
-  if (flag) {
+  var secondColor = (!_secondColor) ? COLOR_RED : _secondColor;
+  var flags = _.filter(Game.flags, (flag) => (flag.color == COLOR_RED && flag.secondaryColor == secondColor));
+  var flag = flags[0];
+  if (flag && this.room.name === flag.pos.roomName) {
     let structures = flag.pos.lookFor(LOOK_STRUCTURES);
     if (structures.length && structures[0] instanceof Structure) {
+      // console.log('attacking ' + structures[0]);
       this.doAttack(structures[0], false && defaultTargeting);
     } else {
       flag.remove();
@@ -229,3 +246,19 @@ Creep.prototype.doAttack = function(target, focusTarget) {
     this.memory.target = target.name;
   }
 }
+
+Creep.prototype.loadTower = function() {
+  var towers = this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => {
+      return (structure.structureType == STRUCTURE_TOWER && structure.energy < (structure.energyCapacity / 1.25));
+    }
+  });
+
+  if (towers.length) {
+    // Load Turrets
+    if(this.transfer(towers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      this.moveTo(towers[0]);
+      return;
+    }
+  }
+};

@@ -5,7 +5,7 @@ Creep.prototype.runGuard = function() {
     creep.memory.roomName = 'W33S22';
   };
 
-  if (this.planAttack()) return;
+  if (this.planAttack(false, 'foo')) return;
 
   getRoom(this);
   if (!this.changeRooms()) {
